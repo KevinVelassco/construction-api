@@ -1,0 +1,236 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type BudgetDetail {
+  uid: String!
+  material: String!
+  price: Float
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  budget: Budget!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type BudgetDetailsResponse {
+  count: Int
+  results: [BudgetDetail!]
+}
+
+type Budget {
+  uid: String!
+  description: String!
+  responsible: String!
+  observation: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  user: User!
+  budgetDetails(
+    """Limit the result set to the specified number of resources."""
+    limit: Int = 10
+
+    """Skip the specified number of resources in the result set."""
+    offset: Int = 0
+
+    """
+    Returns only the rows that match the specific lookup fields of the resource.
+    """
+    q: String
+  ): BudgetDetailsResponse!
+}
+
+type BudgetsResponse {
+  count: Int
+  results: [Budget!]
+}
+
+type User {
+  authUid: String!
+  name: String!
+  lastName: String!
+  email: String!
+  phone: String
+  isAdmin: Boolean!
+  isActive: Boolean!
+  verifiedEmail: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  deletedAt: DateTime
+  budgets(
+    """Limit the result set to the specified number of resources."""
+    limit: Int = 10
+
+    """Skip the specified number of resources in the result set."""
+    offset: Int = 0
+
+    """
+    Returns only the rows that match the specific lookup fields of the resource.
+    """
+    q: String
+  ): BudgetsResponse!
+}
+
+type UsersResponse {
+  count: Int
+  results: [User!]
+}
+
+type Material {
+  uid: String!
+  name: String!
+  price: Float
+  isActive: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type MaterialsResponse {
+  count: Int
+  results: [Material!]
+}
+
+type Query {
+  users(
+    """Limit the result set to the specified number of resources."""
+    limit: Int = 10
+
+    """Skip the specified number of resources in the result set."""
+    offset: Int = 0
+
+    """
+    Returns only the rows that match the specific lookup fields of the resource.
+    """
+    q: String
+    isAdmin: Boolean
+    isActive: Boolean
+    verifiedEmail: Boolean
+    authUid: String
+  ): UsersResponse!
+  user(findOneUserInput: FindOneUserInput!): User!
+  materials(
+    """Limit the result set to the specified number of resources."""
+    limit: Int = 10
+
+    """Skip the specified number of resources in the result set."""
+    offset: Int = 0
+
+    """
+    Returns only the rows that match the specific lookup fields of the resource.
+    """
+    q: String
+    isActive: Boolean
+  ): MaterialsResponse!
+  material(findOneUserInput: FindOneMaterialInput!): Material!
+  Budgets(
+    """Limit the result set to the specified number of resources."""
+    limit: Int = 10
+
+    """Skip the specified number of resources in the result set."""
+    offset: Int = 0
+
+    """
+    Returns only the rows that match the specific lookup fields of the resource.
+    """
+    q: String
+  ): BudgetsResponse!
+  Budget(findOneUserInput: FindOneBudgetInput!): Budget!
+  BudgetDetails(
+    findAllBudgetDetailByBudgetInput: FindAllBudgetDetailByBudgetInput!
+
+    """Limit the result set to the specified number of resources."""
+    limit: Int = 10
+
+    """Skip the specified number of resources in the result set."""
+    offset: Int = 0
+
+    """
+    Returns only the rows that match the specific lookup fields of the resource.
+    """
+    q: String
+  ): BudgetDetailsResponse!
+  BudgetDetail(findOneBudgetDetailInput: FindOneBudgetDetailInput!): BudgetDetail!
+}
+
+input FindOneUserInput {
+  authUid: String!
+}
+
+input FindOneMaterialInput {
+  uid: String!
+}
+
+input FindOneBudgetInput {
+  uid: String!
+}
+
+input FindAllBudgetDetailByBudgetInput {
+  budgetUid: String!
+}
+
+input FindOneBudgetDetailInput {
+  uid: String!
+  budgetUid: String!
+}
+
+type Mutation {
+  createUser(createUserInput: CreateUserInput!): User!
+  updateUser(findOneUserInput: FindOneUserInput!, updateUserInput: UpdateUserInput!): User!
+  deleteUser(findOneUserInput: FindOneUserInput!): User!
+  createMaterial(createMaterialInput: CreateMaterialInput!): Material!
+  updateMaterial(findOneUserInput: FindOneMaterialInput!, updateMaterialInput: UpdateMaterialInput!): Material!
+  deleteMaterial(findOneUserInput: FindOneMaterialInput!): Material!
+  createBudget(createBudgetInput: CreateBudgetInput!): Budget!
+  updateBudget(findOneUserInput: FindOneBudgetInput!, updateBudgetInput: UpdateBudgetInput!): Budget!
+  deleteBudget(findOneUserInput: FindOneBudgetInput!): Budget!
+  createBudgetDetail(createBudgetDetailInput: CreateBudgetDetailInput!): BudgetDetail!
+  updateBudgetDetail(findOneBudgetDetailInput: FindOneBudgetDetailInput!, updateBudgetDetailInput: UpdateBudgetDetailInput!): BudgetDetail!
+  deleteBudgetDetail(findOneBudgetDetailInput: FindOneBudgetDetailInput!): BudgetDetail!
+}
+
+input CreateUserInput {
+  name: String!
+  lastName: String!
+  email: String!
+  phone: String
+  password: String!
+}
+
+input UpdateUserInput {
+  name: String
+  lastName: String
+}
+
+input CreateMaterialInput {
+  name: String!
+  price: Float
+}
+
+input UpdateMaterialInput {
+  name: String
+  price: Float
+}
+
+input CreateBudgetInput {
+  description: String!
+  responsible: String!
+  observation: String
+}
+
+input UpdateBudgetInput {
+  description: String
+  responsible: String
+  observation: String
+}
+
+input CreateBudgetDetailInput {
+  materialUid: String!
+  budgetUid: String!
+}
+
+input UpdateBudgetDetailInput {
+  materialUid: String!
+}

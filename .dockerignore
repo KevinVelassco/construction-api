@@ -1,0 +1,9 @@
+dist/
+node_modules/
+postgres_data/
+tmp/
+coverage/
+.git/
+
+.env.template
+.gitignore
