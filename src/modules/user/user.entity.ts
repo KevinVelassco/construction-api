@@ -15,7 +15,9 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Budget } from '../budget/budget.entity';
+import { Customer } from '../customer/customer.entity';
 import { BudgetsResponse } from '../budget/dto';
+import { CustomersResponse } from '../customer/dto';
 
 @ObjectType()
 @Entity({ name: 'users' })
@@ -77,6 +79,10 @@ export class User {
   @Field(() => BudgetsResponse)
   @OneToMany(() => Budget, (budget: Budget) => budget.user)
   budgets: Budget[];
+
+  @Field(() => CustomersResponse)
+  @OneToMany(() => Customer, (customer: Customer) => customer.user)
+  customers: Customer[];
 
   @BeforeInsert()
   @BeforeUpdate()

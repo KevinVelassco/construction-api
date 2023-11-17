@@ -8,10 +8,10 @@ export class CreateMaterialInput {
   @IsNotEmptyCustom()
   @IsString()
   @MaxLength(200)
-  name: string;
+  readonly name: string;
 
   @Field(() => Float, { nullable: true })
   @IsOptional()
   @IsNumber()
-  price?: number;
+  readonly price?: number;
 }

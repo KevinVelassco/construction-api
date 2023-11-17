@@ -14,6 +14,7 @@ import { Budget } from '../budget/budget.entity';
 
 @ObjectType()
 @Entity({ name: 'budget_details' })
+@Unique('uq_budget_detail_uid', ['uid'])
 @Unique('uq_budget_detail_material', ['budget', 'material'])
 export class BudgetDetail {
   @PrimaryGeneratedColumn()

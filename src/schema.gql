@@ -16,19 +16,48 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type BudgetsResponse {
+  count: Int!
+  results: [Budget!]!
+}
+
+type Customer {
+  uid: String!
+  fullName: String!
+  email: String
+  phone: String
+  address: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  user: User!
+  budgets(
+    """Limit the result set to the specified number of resources."""
+    limit: Int = 10
+
+    """Skip the specified number of resources in the result set."""
+    offset: Int = 0
+
+    """
+    Returns only the rows that match the specific lookup fields of the resource.
+    """
+    q: String
+  ): BudgetsResponse!
+}
+
 type BudgetDetailsResponse {
-  count: Int
-  results: [BudgetDetail!]
+  count: Int!
+  results: [BudgetDetail!]!
 }
 
 type Budget {
   uid: String!
   description: String!
-  responsible: String!
+  address: String
   observation: String
   createdAt: DateTime!
   updatedAt: DateTime!
   user: User!
+  customer: Customer!
   budgetDetails(
     """Limit the result set to the specified number of resources."""
     limit: Int = 10
@@ -43,9 +72,9 @@ type Budget {
   ): BudgetDetailsResponse!
 }
 
-type BudgetsResponse {
-  count: Int
-  results: [Budget!]
+type CustomersResponse {
+  count: Int!
+  results: [Customer!]!
 }
 
 type User {
@@ -72,11 +101,23 @@ type User {
     """
     q: String
   ): BudgetsResponse!
+  customers(
+    """Limit the result set to the specified number of resources."""
+    limit: Int = 10
+
+    """Skip the specified number of resources in the result set."""
+    offset: Int = 0
+
+    """
+    Returns only the rows that match the specific lookup fields of the resource.
+    """
+    q: String
+  ): CustomersResponse!
 }
 
 type UsersResponse {
-  count: Int
-  results: [User!]
+  count: Int!
+  results: [User!]!
 }
 
 type Material {
@@ -89,8 +130,8 @@ type Material {
 }
 
 type MaterialsResponse {
-  count: Int
-  results: [Material!]
+  count: Int!
+  results: [Material!]!
 }
 
 type Query {
@@ -138,6 +179,19 @@ type Query {
     q: String
   ): BudgetsResponse!
   Budget(findOneUserInput: FindOneBudgetInput!): Budget!
+  customers(
+    """Limit the result set to the specified number of resources."""
+    limit: Int = 10
+
+    """Skip the specified number of resources in the result set."""
+    offset: Int = 0
+
+    """
+    Returns only the rows that match the specific lookup fields of the resource.
+    """
+    q: String
+  ): CustomersResponse!
+  customer(findOneCustomerInput: FindOneCustomerInput!): Customer!
   BudgetDetails(
     findAllBudgetDetailByBudgetInput: FindAllBudgetDetailByBudgetInput!
 
@@ -167,6 +221,10 @@ input FindOneBudgetInput {
   uid: String!
 }
 
+input FindOneCustomerInput {
+  uid: String!
+}
+
 input FindAllBudgetDetailByBudgetInput {
   budgetUid: String!
 }
@@ -186,6 +244,9 @@ type Mutation {
   createBudget(createBudgetInput: CreateBudgetInput!): Budget!
   updateBudget(findOneUserInput: FindOneBudgetInput!, updateBudgetInput: UpdateBudgetInput!): Budget!
   deleteBudget(findOneUserInput: FindOneBudgetInput!): Budget!
+  createCustomer(createCustomerInput: CreateCustomerInput!): Customer!
+  updateCustomer(findOneCustomerInput: FindOneCustomerInput!, updateCustomerInput: UpdateCustomerInput!): Customer!
+  deleteCustomer(findOneCustomerInput: FindOneCustomerInput!): Customer!
   createBudgetDetail(createBudgetDetailInput: CreateBudgetDetailInput!): BudgetDetail!
   updateBudgetDetail(findOneBudgetDetailInput: FindOneBudgetDetailInput!, updateBudgetDetailInput: UpdateBudgetDetailInput!): BudgetDetail!
   deleteBudgetDetail(findOneBudgetDetailInput: FindOneBudgetDetailInput!): BudgetDetail!
@@ -216,14 +277,30 @@ input UpdateMaterialInput {
 
 input CreateBudgetInput {
   description: String!
-  responsible: String!
   observation: String
+  address: String
+  customerUid: String!
 }
 
 input UpdateBudgetInput {
   description: String
-  responsible: String
   observation: String
+  address: String
+  customerUid: String
+}
+
+input CreateCustomerInput {
+  fullName: String!
+  email: String
+  phone: String
+  address: String
+}
+
+input UpdateCustomerInput {
+  fullName: String
+  email: String
+  phone: String
+  address: String
 }
 
 input CreateBudgetDetailInput {

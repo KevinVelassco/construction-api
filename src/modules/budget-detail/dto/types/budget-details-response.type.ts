@@ -1,7 +1,11 @@
-import { ObjectType } from '@nestjs/graphql';
-
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { BudgetDetail } from '../../budget-detail.entity';
-import { ResultsResponse } from '../../../../common/dto';
 
 @ObjectType()
-export class BudgetDetailsResponse extends ResultsResponse(BudgetDetail) {}
+export class BudgetDetailsResponse {
+  @Field(() => Int)
+  readonly count: number;
+
+  @Field(() => [BudgetDetail])
+  readonly results: BudgetDetail[];
+}

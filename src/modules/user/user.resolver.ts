@@ -19,6 +19,7 @@ import {
 } from './dto';
 import { PaginationArgs } from '../../common/dto';
 import { BudgetsResponse } from '../budget/dto';
+import { CustomersResponse } from '../customer/dto';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -68,11 +69,20 @@ export class UsersResolver {
   }
 
   @ResolveField(() => BudgetsResponse, { name: 'budgets' })
-  async budgets(
+  budgets(
     @Parent() parent: User,
     @Args() paginationArgs: PaginationArgs,
     @GetFiledsList() fieldsList: FieldsResult,
   ): Promise<BudgetsResponse> {
     return this.userService.budgets(parent, paginationArgs, fieldsList);
+  }
+
+  @ResolveField(() => CustomersResponse, { name: 'customers' })
+  customers(
+    @Parent() parent: User,
+    @Args() paginationArgs: PaginationArgs,
+    @GetFiledsList() fieldsList: FieldsResult,
+  ): Promise<CustomersResponse> {
+    return this.userService.customers(parent, paginationArgs, fieldsList);
   }
 }

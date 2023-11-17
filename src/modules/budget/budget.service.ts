@@ -8,7 +8,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, In, Repository } from 'typeorm';
 import { Budget } from './budget.entity';
 import { User } from '../user/user.entity';
+import { Customer } from '../customer/customer.entity';
 import { BudgetDetail } from '../budget-detail/budget-detail.entity';
+import { CustomerService } from '../customer/customer.service';
 import { FieldsResult } from '../../common/decorators';
 
 import {
@@ -26,13 +28,19 @@ export class BudgetService {
     private readonly dataSource: DataSource,
     @InjectRepository(Budget)
     private readonly budgetRepository: Repository<Budget>,
+    private readonly customerService: CustomerService,
   ) {}
 
   async create(
     authUser: User,
     createBudgetInput: CreateBudgetInput,
   ): Promise<Budget> {
-    const { description } = createBudgetInput;
+    const { customerUid, description } = createBudgetInput;
+
+    const customer = await this.customerService.findOne(authUser, {
+      uid: customerUid,
+      checkIfExists: true,
+    });
 
     const existingByDescription = await this.budgetRepository
       .createQueryBuilder('budget')
@@ -50,6 +58,7 @@ export class BudgetService {
     const created = this.budgetRepository.create({
       ...createBudgetInput,
       user: authUser,
+      customer,
     });
 
     const saved = await this.budgetRepository.save(created);
@@ -67,11 +76,12 @@ export class BudgetService {
     const query = this.budgetRepository
       .createQueryBuilder('budget')
       .loadAllRelationIds()
+      .innerJoin('budget.customer', 'customer')
       .where('budget.user_id = :userId', { userId: authUser.id });
 
     if (q)
       query.andWhere(
-        '(budget.description ilike :q OR budget.responsible ilike :q OR budget.observation ilike :q)',
+        '(budget.description ilike :q OR customer.fullName ilike :q OR budget.observation ilike :q)',
         {
           q: `%${q}%`,
         },
@@ -132,7 +142,16 @@ export class BudgetService {
       checkIfExists: true,
     });
 
-    const { description } = updateBudgetInput;
+    const { customerUid, description } = updateBudgetInput;
+
+    let customer: Customer;
+
+    if (customerUid) {
+      customer = await this.customerService.findOne(authUser, {
+        uid: customerUid,
+        checkIfExists: true,
+      });
+    }
 
     if (description) {
       const existingByDescription = await this.budgetRepository
@@ -152,6 +171,7 @@ export class BudgetService {
     const preloaded = await this.budgetRepository.preload({
       id: existingBudget.id,
       ...updateBudgetInput,
+      customer,
     });
 
     const saved = await this.budgetRepository.save(preloaded);
@@ -193,6 +213,7 @@ export class BudgetService {
     const query = this.dataSource
       .getRepository(BudgetDetail)
       .createQueryBuilder('budget_detail')
+      .loadAllRelationIds()
       .innerJoin('budget_detail.budget', 'budget')
       .where('budget.id = :budgetId ', { budgetId: parent.id })
       .andWhere('budget.user_id = :userId', { userId: authUser.id });

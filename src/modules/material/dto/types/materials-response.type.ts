@@ -1,7 +1,11 @@
-import { ObjectType } from '@nestjs/graphql';
-
-import { ResultsResponse } from '../../../../common/dto';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Material } from '../../material.entity';
 
 @ObjectType()
-export class MaterialsResponse extends ResultsResponse(Material) {}
+export class MaterialsResponse {
+  @Field(() => Int)
+  readonly count: number;
+
+  @Field(() => [Material])
+  readonly results: Material[];
+}

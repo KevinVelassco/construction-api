@@ -10,23 +10,18 @@ import {
 import { IsNotEmptyCustom } from '../../../../common/decorators';
 
 @InputType()
-export class CreateUserInput {
+export class CreateCustomerInput {
   @Field(() => String)
   @IsNotEmptyCustom()
   @IsString()
   @MaxLength(100)
-  readonly name: string;
+  readonly fullName: string;
 
-  @Field(() => String)
-  @IsNotEmptyCustom()
-  @IsString()
-  @MaxLength(100)
-  readonly lastName: string;
-
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
+  @IsOptional()
   @IsEmail()
   @MaxLength(100)
-  readonly email: string;
+  readonly email?: string;
 
   @Field(() => String, { nullable: true })
   @IsOptional()
@@ -34,9 +29,9 @@ export class CreateUserInput {
   @Length(10)
   readonly phone?: string;
 
-  @Field(() => String)
-  @IsNotEmptyCustom()
+  @Field(() => String, { nullable: true })
+  @IsOptional()
   @IsString()
-  @Length(8, 50)
-  readonly password: string;
+  @MaxLength(100)
+  readonly address?: string;
 }

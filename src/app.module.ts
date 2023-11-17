@@ -18,6 +18,7 @@ import { UserModule } from './modules/user/user.module';
 import { MaterialModule } from './modules/material/material.module';
 import { BudgetModule } from './modules/budget/budget.module';
 import { BudgetDetailModule } from './modules/budget-detail/budget-detail.module';
+import { CustomerModule } from './modules/customer/customer.module';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { BudgetDetailModule } from './modules/budget-detail/budget-detail.module
     MaterialModule,
     BudgetModule,
     BudgetDetailModule,
+    CustomerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

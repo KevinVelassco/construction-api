@@ -13,7 +13,6 @@ import { User } from '../user/user.entity';
 import { BudgetDetailLoaders } from './budget-detail.loaders';
 import { Budget } from '../budget/budget.entity';
 import {
-  Admin,
   FieldsResult,
   GetCurrentUser,
   GetFiledsList,
@@ -34,7 +33,6 @@ export class BudgetDetailResolver {
     private readonly budgetDetailLoaders: BudgetDetailLoaders,
   ) {}
 
-  @Admin()
   @Mutation(() => BudgetDetail, { name: 'createBudgetDetail' })
   create(
     @GetCurrentUser() authUser: User,
@@ -72,7 +70,6 @@ export class BudgetDetailResolver {
     });
   }
 
-  @Admin()
   @Mutation(() => BudgetDetail, { name: 'updateBudgetDetail' })
   update(
     @GetCurrentUser() authUser: User,
@@ -88,7 +85,6 @@ export class BudgetDetailResolver {
     );
   }
 
-  @Admin()
   @Mutation(() => BudgetDetail, { name: 'deleteBudgetDetail' })
   delete(
     @GetCurrentUser() authUser: User,

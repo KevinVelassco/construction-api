@@ -13,10 +13,12 @@ import {
 } from 'typeorm';
 import { User } from '../user/user.entity';
 import { BudgetDetail } from '../budget-detail/budget-detail.entity';
+import { Customer } from '../customer/customer.entity';
 import { BudgetDetailsResponse } from '../budget-detail/dto';
 
 @ObjectType()
 @Entity({ name: 'budgets' })
+@Unique('uq_budget_uid', ['uid'])
 @Unique('uq_budget_description', ['user', 'description'])
 export class Budget {
   @PrimaryGeneratedColumn()
@@ -31,9 +33,9 @@ export class Budget {
   @Column({ type: 'varchar', length: 100 })
   description: string;
 
-  @Field(() => String)
-  @Column({ type: 'varchar', length: 100 })
-  responsible: string;
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  address?: string;
 
   @Field(() => String, { nullable: true })
   @Column({ type: 'varchar', length: 400, nullable: true })
@@ -53,6 +55,13 @@ export class Budget {
   })
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @Field(() => Customer)
+  @ManyToOne(() => Customer, (customer: Customer) => customer.budgets, {
+    nullable: false,
+  })
+  @JoinColumn({ name: 'customer_id' })
+  customer: Customer;
 
   @Field(() => BudgetDetailsResponse)
   @OneToMany(

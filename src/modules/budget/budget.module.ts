@@ -7,9 +7,10 @@ import { BudgetLoaders } from './budget.loaders';
 import { Budget } from './budget.entity';
 
 import { UserModule } from '../user/user.module';
+import { CustomerModule } from '../customer/customer.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Budget]), UserModule],
+  imports: [TypeOrmModule.forFeature([Budget]), UserModule, CustomerModule],
   providers: [BudgetResolver, BudgetService, BudgetLoaders],
   exports: [BudgetService],
 })

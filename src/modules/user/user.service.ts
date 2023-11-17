@@ -9,6 +9,7 @@ import { DataSource, In, Repository } from 'typeorm';
 
 import { User } from './user.entity';
 import { Budget } from '../budget/budget.entity';
+import { Customer } from '../customer/customer.entity';
 import { FieldsResult } from '../../common/decorators';
 
 import {
@@ -21,6 +22,7 @@ import {
 
 import { PaginationArgs } from '../../common/dto';
 import { BudgetsResponse } from '../budget/dto';
+import { CustomersResponse } from '../customer/dto';
 
 @Injectable()
 export class UserService {
@@ -163,6 +165,7 @@ export class UserService {
     const query = this.dataSource
       .getRepository(Budget)
       .createQueryBuilder('budget')
+      .loadAllRelationIds()
       .where('budget.user_id = :userId', { userId: parent.id });
 
     if (q)
@@ -177,6 +180,49 @@ export class UserService {
       .take(limit || 10)
       .skip(offset)
       .orderBy('budget.id', 'DESC');
+
+    const { fields, numberOfFields } = fieldsList;
+
+    if (numberOfFields <= 1 && fields[0] === 'count') {
+      const count = await query.getCount();
+      return { count, results: null };
+    }
+
+    if (numberOfFields <= 1 && fields[0] === 'results') {
+      const results = await query.getMany();
+      return { count: null, results };
+    }
+
+    const [results, count] = await query.getManyAndCount();
+
+    return { count, results };
+  }
+
+  async customers(
+    parent: User,
+    paginationArgs: PaginationArgs,
+    fieldsList: FieldsResult,
+  ): Promise<CustomersResponse> {
+    const { limit, offset, q } = paginationArgs;
+
+    const query = this.dataSource
+      .getRepository(Customer)
+      .createQueryBuilder('customer')
+      .loadAllRelationIds()
+      .where('customer.user_id = :userId', { userId: parent.id });
+
+    if (q)
+      query.andWhere(
+        '(customer.fullName ilike :q OR customer.address ilike :q OR customer.email ilike :q OR customer.phone ilike :q)',
+        {
+          q: `%${q}%`,
+        },
+      );
+
+    query
+      .take(limit || 10)
+      .skip(offset)
+      .orderBy('customer.id', 'DESC');
 
     const { fields, numberOfFields } = fieldsList;
 

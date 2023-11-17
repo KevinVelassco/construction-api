@@ -10,8 +10,8 @@ import {
 import { BudgetService } from './budget.service';
 import { Budget } from './budget.entity';
 import { User } from '../user/user.entity';
+import { Customer } from '../customer/customer.entity';
 import {
-  Admin,
   FieldsResult,
   GetCurrentUser,
   GetFiledsList,
@@ -33,7 +33,6 @@ export class BudgetResolver {
     private readonly budgetLoaders: BudgetLoaders,
   ) {}
 
-  @Admin()
   @Mutation(() => Budget, { name: 'createBudget' })
   create(
     @GetCurrentUser() authUser: User,
@@ -62,7 +61,6 @@ export class BudgetResolver {
     });
   }
 
-  @Admin()
   @Mutation(() => Budget, { name: 'updateBudget' })
   update(
     @GetCurrentUser() authUser: User,
@@ -76,7 +74,6 @@ export class BudgetResolver {
     );
   }
 
-  @Admin()
   @Mutation(() => Budget, { name: 'deleteBudget' })
   delete(
     @GetCurrentUser() authUser: User,
@@ -94,8 +91,17 @@ export class BudgetResolver {
     return this.budgetLoaders.batchUsers.load(id);
   }
 
+  @ResolveField(() => User, { name: 'customer' })
+  customer(@Parent() parent: Budget): Promise<Customer> {
+    const value = parent.customer;
+
+    const id = typeof value !== 'number' ? value.id : value;
+
+    return this.budgetLoaders.batchCustomers.load(id);
+  }
+
   @ResolveField(() => BudgetDetailsResponse, { name: 'budgetDetails' })
-  async budgetDetails(
+  budgetDetails(
     @GetCurrentUser() authUser: User,
     @Parent() parent: Budget,
     @Args() paginationArgs: PaginationArgs,

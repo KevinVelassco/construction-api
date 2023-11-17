@@ -11,6 +11,7 @@ import {
 
 @ObjectType()
 @Entity({ name: 'materials' })
+@Unique('uq_material_uid', ['uid'])
 @Unique('uq_material_name', ['name'])
 export class Material {
   @PrimaryGeneratedColumn()
